@@ -1,106 +1,194 @@
 import 'dart:io';
 
-// ===============================
-//           DAY 1 STRUCTURE
-// ===============================
-
-void day1Menu() {
-  while (true) {
-    print("\n========= CLIENT MANAGEMENT SYSTEM (DAY 1) =========");
-    print("1. Add Client");
-    print("2. View Clients");
-    print("3. Update Client");
-    print("4. Delete Client");
-    print("5. Search Client");
-    print("6. Exit");
-
-    stdout.write("Enter your choice: ");
-    String? choice = stdin.readLineSync();
-
-    switch (choice) {
-      case '1':
-        print("[Day1] Add Client selected (Logic pending)");
-        break;
-      case '2':
-        print("[Day1] View Clients selected (Logic pending)");
-        break;
-      case '3':
-        print("[Day1] Update Client selected (Logic pending)");
-        break;
-      case '4':
-        print("[Day1] Delete Client selected (Logic pending)");
-        break;
-      case '5':
-        print("[Day1] Search Client selected (Logic pending)");
-        break;
-      case '6':
-        print("Exiting Day 1 menu. Goodbye!");
-        return;
-      default:
-        print("Invalid choice! Please enter 1-6.");
-    }
-  }
-}
-
-// ===============================
-//           DAY 2 STRUCTURE
-// ===============================
-
-// Client class (Model)
 class Client {
-  static int _idCounter = 1;
-
-  int clientID;
   String name;
   String phone;
   String email;
 
-  Client({
-    required this.name,
-    required this.phone,
-    required this.email,
-  }) : clientID = _idCounter++;
+  Client(this.name, this.phone, this.email);
 
   @override
   String toString() {
-    return "ID: $clientID | Name: $name | Phone: $phone | Email: $email";
+    return "$name | $phone | $email";
   }
 }
 
-// Client list
 List<Client> clients = [];
 
-// Function skeletons
+// ---------------- Add Client ----------------
 void addClient() {
-  print("\n[Day2] Add Client Function Called (Logic will be added in Day 3)");
+  stdout.write("Enter name: ");
+  String? name = stdin.readLineSync();
+
+  stdout.write("Enter phone: ");
+  String? phone = stdin.readLineSync();
+
+  stdout.write("Enter email: ");
+  String? email = stdin.readLineSync();
+
+  if (name == null || phone == null || email == null) {
+    print(" Invalid input!\n");
+    return;
+  }
+
+  clients.add(Client(name, phone, email));
+  print("✔ Client added successfully!\n");
 }
 
+// ---------------- View All Clients ----------------
 void viewClients() {
-  print("\n[Day2] View Clients Function Called (Logic will be added in Day 3)");
+  if (clients.isEmpty) {
+    print("No clients available.\n");
+    return;
+  }
+
+  print("\n------ Client List ------");
+  for (int i = 0; i < clients.length; i++) {
+    print("${i + 1}. ${clients[i]}");
+  }
+  print("");
 }
 
+// ---------------- Search Client ----------------
 void searchClient() {
-  print("\n[Day2] Search Client Function Called (Logic pending)");
+  stdout.write("Enter name/phone/email to search: ");
+  String? query = stdin.readLineSync();
+
+  if (query == null || query.isEmpty) {
+    print(" Invalid search query!\n");
+    return;
+  }
+
+  var results = clients.where((c) =>
+      c.name.toLowerCase().contains(query.toLowerCase()) ||
+      c.phone.contains(query) ||
+      c.email.toLowerCase().contains(query.toLowerCase()));
+
+  if (results.isEmpty) {
+    print(" No client found.\n");
+  } else {
+    print("\n🔍 Search Results:");
+    for (var c in results) {
+      print(c);
+    }
+    print("");
+  }
 }
 
+// ---------------- Update Client ----------------
 void updateClient() {
-  print("\n[Day2] Update Client Function Called (Logic pending)");
+  if (clients.isEmpty) {
+    print("No clients available.\n");
+    return;
+  }
+
+  viewClients();
+
+  stdout.write("Enter client number to update: ");
+  String? input = stdin.readLineSync();
+
+  if (input == null || int.tryParse(input) == null) {
+    print(" Invalid number!\n");
+    return;
+  }
+
+  int index = int.parse(input) - 1;
+
+  if (index < 0 || index >= clients.length) {
+    print(" Invalid client number.\n");
+    return;
+  }
+
+  stdout.write("New name (${clients[index].name}): ");
+  String newName = stdin.readLineSync() ?? "";
+
+  stdout.write("New phone (${clients[index].phone}): ");
+  String newPhone = stdin.readLineSync() ?? "";
+
+  stdout.write("New email (${clients[index].email}): ");
+  String newEmail = stdin.readLineSync() ?? "";
+
+  if (newName.isNotEmpty) clients[index].name = newName;
+  if (newPhone.isNotEmpty) clients[index].phone = newPhone;
+  if (newEmail.isNotEmpty) clients[index].email = newEmail;
+
+  print("✔ Client updated!\n");
 }
 
+// ---------------- Delete Client ----------------
 void deleteClient() {
-  print("\n[Day2] Delete Client Function Called (Logic pending)");
+  if (clients.isEmpty) {
+    print("No clients available.\n");
+    return;
+  }
+
+  viewClients();
+
+  stdout.write("Enter client number to delete: ");
+  String? input = stdin.readLineSync();
+
+  if (input == null || int.tryParse(input) == null) {
+    print(" Invalid number!\n");
+    return;
+  }
+
+  int index = int.parse(input) - 1;
+
+  if (index < 0 || index >= clients.length) {
+    print(" Invalid client number.\n");
+    return;
+  }
+
+  clients.removeAt(index);
+  print("🗑 Client deleted.\n");
 }
 
-// ===============================
-//           MAIN FUNCTION
-// ===============================
-void main() {
-  print("=== Welcome to Client Management System ===");
-  
-  // First, show Day 1 menu
-  day1Menu();
+// ---------------- Count Clients ----------------
+void countClients() {
+  print("Total Clients: ${clients.length}\n");
+}
 
-  // After Day 1 menu exits, Day 2 structure can be used
-  print("\n=== Day 2 Structure Ready ===");
-  print("Client class and function skeletons are ready for logic implementation.");
+// ---------------- Main Menu ----------------
+void main() {
+  while (true) {
+    print("""
+========= CLIENT MANAGEMENT SYSTEM =========
+1. Add Client
+2. View All Clients
+3. Search Client
+4. Update Client
+5. Delete Client
+6. Count Total Clients
+7. Exit
+Enter your choice:
+""");
+
+    String? choice = stdin.readLineSync();
+
+    switch (choice) {
+      case "1":
+        addClient();
+        break;
+      case "2":
+        viewClients();
+        break;
+      case "3":
+        searchClient();
+        break;
+      case "4":
+        updateClient();
+        break;
+      case "5":
+        deleteClient();
+        break;
+      case "6":
+        countClients();
+        break;
+      case "7":
+        print("Goodbye!");
+        return;
+      default:
+        print(" Invalid choice! Enter 1–7.\n");
+    }
+  }
 }
