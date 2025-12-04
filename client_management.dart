@@ -67,7 +67,7 @@ void searchClient() {
   if (results.isEmpty) {
     print(" No client found.\n");
   } else {
-    print("\n🔍 Search Results:");
+    print("\n Search Results:");
     for (var c in results) {
       print(c);
     }
